@@ -99,6 +99,7 @@ public class CLSMatchDetailActivity extends BaseActivity{
 
         CustomFragmentPagerAdapter adapter=new CustomFragmentPagerAdapter(getSupportFragmentManager(),titles,fragments);
         viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(fragments.size());
         tabLayout.setupWithViewPager(viewPager);
     }
 

@@ -220,7 +220,7 @@ public class CLSMatchLineupFragment extends BaseFragment{
                     if(awayObj!=null&&!awayObj.isEmpty()){
                         lineupEntity.setAwayPlayerId(awayObj.getIntValue("playerId"));
                         lineupEntity.setAwayPlayerNo(awayObj.getIntValue("playerNo"));
-                        lineupEntity.setAwayPlayerName("playerName");
+                        lineupEntity.setAwayPlayerName(awayObj.getString("playerName"));
                     }
                 }
                 lineupEntity.setType(2);
