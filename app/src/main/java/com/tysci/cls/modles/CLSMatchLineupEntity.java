@@ -26,6 +26,13 @@ public class CLSMatchLineupEntity {
     private int teamId;
     private int type;
 
+    private int homePlayerId;
+    private int homePlayerNo;
+    private String homePlayerName;
+    private int awayPlayerId;
+    private int awayPlayerNo;
+    private String awayPlayerName;
+
     public void setPosition(String position) {
         this.position = position;
     }
@@ -96,5 +103,53 @@ public class CLSMatchLineupEntity {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public String getAwayPlayerName() {
+        return awayPlayerName;
+    }
+
+    public void setAwayPlayerName(String awayPlayerName) {
+        this.awayPlayerName = awayPlayerName;
+    }
+
+    public int getAwayPlayerNo() {
+        return awayPlayerNo;
+    }
+
+    public void setAwayPlayerNo(int awayPlayerNo) {
+        this.awayPlayerNo = awayPlayerNo;
+    }
+
+    public String getHomePlayerName() {
+        return homePlayerName;
+    }
+
+    public void setHomePlayerName(String homePlayerName) {
+        this.homePlayerName = homePlayerName;
+    }
+
+    public int getHomePlayerNo() {
+        return homePlayerNo;
+    }
+
+    public void setHomePlayerNo(int homePlayerNo) {
+        this.homePlayerNo = homePlayerNo;
+    }
+
+    public int getAwayPlayerId() {
+        return awayPlayerId;
+    }
+
+    public void setAwayPlayerId(int awayPlayerId) {
+        this.awayPlayerId = awayPlayerId;
+    }
+
+    public int getHomePlayerId() {
+        return homePlayerId;
+    }
+
+    public void setHomePlayerId(int homePlayerId) {
+        this.homePlayerId = homePlayerId;
     }
 }

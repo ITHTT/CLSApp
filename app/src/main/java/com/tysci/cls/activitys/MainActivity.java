@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import com.pgyersdk.update.PgyUpdateManager;
 import com.tysci.cls.R;
 import com.tysci.cls.app.BaseActivity;
+import com.tysci.cls.fragments.CLSMatchListFragment;
 import com.tysci.cls.fragments.CLSWebViewFragment;
 import com.tysci.cls.networks.HttpUrls;
 import com.tysci.cls.utils.StatusBarCompat;
@@ -37,7 +38,7 @@ public class MainActivity extends BaseActivity{
 
     private CLSWebViewFragment teamFragment;
     private CLSWebViewFragment pointsFragment;
-    private CLSWebViewFragment matchFragment;
+    private CLSMatchListFragment matchFragment;
     private CLSWebViewFragment newsFragment;
     private CLSWebViewFragment AFCFragment;
 
@@ -136,8 +137,8 @@ public class MainActivity extends BaseActivity{
                 break;
             case R.id.iv_game:
                 if(matchFragment==null){
-                    matchFragment=new CLSWebViewFragment();
-                    matchFragment.setUrl(url);
+                    matchFragment=new CLSMatchListFragment();
+                   // matchFragment.setUrl(url);
                     transaction.add(R.id.layout_container,matchFragment);
                 }else{
                     transaction.show(matchFragment);
