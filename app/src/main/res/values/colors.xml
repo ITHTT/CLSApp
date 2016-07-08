@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#006699</color>
+    <color name="colorPrimaryDark">#006699</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="colorMainTabMenuNormal">#898989</color>
+    <color name="colorMainTabMenuSelected">#006699</color>
+
+    <color name="colorLine">#323639</color>
+    <color name="gray">#dedfe4</color>
+    <color name="textColor">#3a3a3a</color>
+</resources>
