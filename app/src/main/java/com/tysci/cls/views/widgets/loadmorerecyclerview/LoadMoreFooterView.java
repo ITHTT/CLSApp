@@ -8,10 +8,10 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.tysci.cls.R;
+import com.tysci.cls.views.widgets.progressview.CircularProgressView;
 
 
 /**
@@ -19,7 +19,7 @@ import com.tysci.cls.R;
  */
 public class LoadMoreFooterView extends LinearLayout {
     private Context context;
-    private ProgressBar progressBar;
+    private CircularProgressView progressBar;
     private TextView tvLoadMoreTip;
     private LinearLayout layoutLoadMoreContent;
     private String loadingTip;
@@ -55,7 +55,7 @@ public class LoadMoreFooterView extends LinearLayout {
         this.context=context;
         LayoutInflater.from(context).inflate(R.layout.layout_load_more_view,this,true);
         layoutLoadMoreContent=(LinearLayout)this.findViewById(R.id.layout_load_more_content);
-        progressBar=(ProgressBar)this.findViewById(R.id.pbLoading);
+        progressBar=(CircularProgressView)this.findViewById(R.id.pbLoading);
         tvLoadMoreTip=(TextView)this.findViewById(R.id.tv_load_more_text);
         tvLoadMoreTip.setText(loadingTip);
     }

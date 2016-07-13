@@ -219,12 +219,22 @@ public class AutoLoadMoreRecyclerView extends RecyclerView {
             loadMoreFooterView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!isLoadMoreing&&loadMoreListener!=null) {
+                    if (!isLoadMoreing && loadMoreListener != null) {
                         setLoadingMore();
                         loadMoreListener.onLoadMore();
                     }
                 }
             });
+        }
+    }
+
+    public void setLoadMoreDataFailed(View.OnClickListener listener){
+        isLoadMoreing = false;
+        isRefreshing=false;
+        if(loadMoreFooterView!=null){
+            loadMoreFooterView.setLoadFailedTip("加载失败，可点击重试");
+            loadMoreFooterView.setLoadMoreFailedState();
+            loadMoreFooterView.setOnClickListener(listener);
         }
     }
 

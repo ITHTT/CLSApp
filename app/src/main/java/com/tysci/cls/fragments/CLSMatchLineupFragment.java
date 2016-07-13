@@ -15,6 +15,7 @@ import com.tysci.cls.networks.HttpClientUtil;
 import com.tysci.cls.networks.HttpUrls;
 import com.tysci.cls.utils.KLog;
 import com.tysci.cls.views.adapters.CLSMatchLineupAdapter;
+import com.tysci.cls.views.widgets.DividerDecoration;
 import com.tysci.cls.views.widgets.loadmorerecyclerview.AutoLoadMoreRecyclerView;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ import okhttp3.Request;
 /**
  * Created by Administrator on 2016/7/8.
  */
-public class CLSMatchLineupFragment extends BaseFragment{
+public class CLSMatchLineupFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,AutoLoadMoreRecyclerView.OnLoadMoreListener{
     @Bind(R.id.swipeRefresh)
     protected SwipeRefreshLayout swipeRefresh;
     @Bind(R.id.recyclerView)
@@ -45,10 +46,13 @@ public class CLSMatchLineupFragment extends BaseFragment{
     @Override
     protected void initViews(View view, Bundle savedInstanceState) {
         recyclerView.setLayoutManager(new LinearLayoutManager(baseActivity));
+        recyclerView.setOnLoadMoreListener(this);
+        swipeRefresh.setOnRefreshListener(this);
         Bundle data=getArguments();
         if(data!=null){
             matchEntity=data.getParcelable("match_info");
             if(matchEntity!=null){
+                setRefreshing();
                 requestMatchLineupInfo(matchEntity.getId());
             }
         }
@@ -59,10 +63,32 @@ public class CLSMatchLineupFragment extends BaseFragment{
         return null;
     }
 
-    private void requestMatchLineupInfo(int matchId){
+    private void setRefreshing() {
+        swipeRefresh.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefresh.setRefreshing(true);
+            }
+        });
+    }
+
+    private void onRefreshCompelete() {
+        if(swipeRefresh!=null) {
+            swipeRefresh.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (swipeRefresh != null) {
+                        swipeRefresh.setRefreshing(false);
+                    }
+                }
+            }, 1000);
+        }
+    }
+
+    private void requestMatchLineupInfo(final int matchId){
         String url= HttpUrls.HTTP_HOST_URL+"match/detail/lineups/"+matchId;
         KLog.e("url:"+url);
-        HttpClientUtil.getHttpClientUtil().sendGetRequest(Tag, url, 60, new HttpClientUtil.StringResponseCallBack() {
+        HttpClientUtil.getHttpClientUtil().sendGetRequest(Tag, url, 0, new HttpClientUtil.StringResponseCallBack() {
             @Override
             public void onBefore(Request request) {
 
@@ -70,7 +96,18 @@ public class CLSMatchLineupFragment extends BaseFragment{
 
             @Override
             public void onError(Call call, Exception error) {
-
+                if(lineupEntityList==null){
+                    lineupEntityList=new ArrayList<CLSMatchLineupEntity>();
+                    adapter=new CLSMatchLineupAdapter(lineupEntityList);
+                    recyclerView.setAdapter(adapter);
+                }
+                recyclerView.setLoadMoreDataFailed(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        recyclerView.setLoadingMore();
+                        requestMatchLineupInfo(matchId);
+                    }
+                });
             }
 
             @Override
@@ -78,9 +115,9 @@ public class CLSMatchLineupFragment extends BaseFragment{
                 KLog.json(response);
                 JSONObject obj=JSONObject.parseObject(response);
                 if(obj!=null&&!obj.isEmpty()){
-                    int statusCode=obj.getIntValue("statusCode");
+                    int statusCode=obj.getIntValue("code");
                     if(statusCode==200){
-                        JSONObject dataMap=obj.getJSONObject("dataMap");
+                        JSONObject dataMap=obj.getJSONObject("data");
                         if(dataMap!=null&&!dataMap.isEmpty()){
                             JSONObject lineupObj=dataMap.getJSONObject("lineups");
                             if(lineupObj!=null&&!lineupObj.isEmpty()){
@@ -109,6 +146,9 @@ public class CLSMatchLineupFragment extends BaseFragment{
                                     if(lineupEntityList==null){
                                         lineupEntityList=new ArrayList<CLSMatchLineupEntity>();
                                     }
+                                    if(!lineupEntityList.isEmpty()){
+                                        lineupEntityList.clear();
+                                    }
                                     if(firstLineups!=null){
                                         lineupEntityList.addAll(firstLineups);
                                     }
@@ -119,18 +159,28 @@ public class CLSMatchLineupFragment extends BaseFragment{
                                     if(adapter==null){
                                         adapter=new CLSMatchLineupAdapter(lineupEntityList);
                                         recyclerView.setAdapter(adapter);
+                                        recyclerView.addItemDecoration(new DividerDecoration(baseActivity));
+                                    }else{
+                                        adapter.notifyDataSetChanged();
                                     }
-
+                                    recyclerView.setLoadMoreDataComplete(R.string.tip_load_complete);
+                                    return;
                                 }
                             }
                         }
                     }
                 }
+                if(lineupEntityList==null){
+                    lineupEntityList=new ArrayList<CLSMatchLineupEntity>();
+                    adapter=new CLSMatchLineupAdapter(lineupEntityList);
+                    recyclerView.setAdapter(adapter);
+                }
+                recyclerView.setLoadMoreDataComplete(R.string.tip_load_complete);
             }
 
             @Override
             public void onFinish(Call call) {
-
+                onRefreshCompelete();
             }
         });
     }
@@ -156,7 +206,6 @@ public class CLSMatchLineupFragment extends BaseFragment{
                 lineupEntity.setType(1);
                 datas.add(lineupEntity);
             }
-
             for(int i=0;i<homeSize||i<awaySize;i++){
                 lineupEntity=new CLSMatchLineupEntity();
                 if(homeLineups!=null&&i<homeSize){
@@ -167,7 +216,6 @@ public class CLSMatchLineupFragment extends BaseFragment{
                         lineupEntity.setHomePlayerName(homeObj.getString("playerName"));
                     }
                 }
-
                 if(awayLineups!=null&&i<awaySize){
                     JSONObject awayObj=awayLineups.getJSONObject(i);
                     if(awayObj!=null&&!awayObj.isEmpty()){
@@ -243,6 +291,16 @@ public class CLSMatchLineupFragment extends BaseFragment{
 
     @Override
     protected void notifyEvent(String action, Bundle data) {
+
+    }
+
+    @Override
+    public void onRefresh() {
+        requestMatchLineupInfo(matchEntity.getId());
+    }
+
+    @Override
+    public void onLoadMore() {
 
     }
 }

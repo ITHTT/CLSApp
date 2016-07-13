@@ -3,6 +3,7 @@ package com.tysci.cls.views.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.tysci.cls.R;
 import com.tysci.cls.activitys.CLSMatchDetailActivity;
 import com.tysci.cls.modles.CLSMatchEntity;
 import com.tysci.cls.networks.GlideImageLoader;
+import com.tysci.cls.utils.KLog;
 import com.tysci.cls.views.widgets.recyclerviewstickyheader.StickyHeaderAdapter;
 
 import java.util.List;
@@ -23,6 +25,8 @@ import java.util.List;
 public class CLSMatchAdapter extends RecyclerView.Adapter<CLSMatchAdapter.CLSMatchViewHolder>
 implements StickyHeaderAdapter<CLSMatchAdapter.CLSMatchViewHolder>{
     private List<CLSMatchEntity> matchEntityList;
+    private int index=0;
+    private String type;
 
     public CLSMatchAdapter(List<CLSMatchEntity> matchEntityList) {
         this.matchEntityList = matchEntityList;
@@ -49,12 +53,28 @@ implements StickyHeaderAdapter<CLSMatchAdapter.CLSMatchViewHolder>{
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Context context=holder.itemView.getContext();
-                Intent intent=new Intent(context, CLSMatchDetailActivity.class);
-                intent.putExtra(CLSMatchDetailActivity.class.getSimpleName(),info);
+                Context context = holder.itemView.getContext();
+                Intent intent = new Intent(context, CLSMatchDetailActivity.class);
+                intent.putExtra(CLSMatchDetailActivity.class.getSimpleName(), info);
                 context.startActivity(intent);
             }
         });
+
+        String header=getHeaderId(position);
+        if(TextUtils.isEmpty(type)||!header.equals(type)){
+            index=1;
+            type=header;
+            holder.layoutContentInfo.setBackgroundResource(R.drawable.match_white_bg);
+        }else{
+            index++;
+            KLog.e("index:"+index);
+            if(index%2==0){
+                KLog.e("设置灰色背景色");
+                holder.layoutContentInfo.setBackgroundResource(R.drawable.match_gray_bg);
+            }else{
+                holder.layoutContentInfo.setBackgroundResource(R.drawable.match_white_bg);
+            }
+        }
     }
 
     @Override
@@ -95,6 +115,7 @@ implements StickyHeaderAdapter<CLSMatchAdapter.CLSMatchViewHolder>{
         TextView tvMatchTime;
         TextView tvMatchCount;
         TextView tvMatchDate;
+        View layoutContentInfo;
 
         public CLSMatchViewHolder(View itemView) {
             super(itemView);
@@ -108,6 +129,8 @@ implements StickyHeaderAdapter<CLSMatchAdapter.CLSMatchViewHolder>{
 
             tvMatchCount=(TextView)itemView.findViewById(R.id.tv_match_count);
             tvMatchDate=(TextView)itemView.findViewById(R.id.tv_match_date);
+
+            layoutContentInfo=itemView.findViewById(R.id.layout_content_info);
         }
     }
 }

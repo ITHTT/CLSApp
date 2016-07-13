@@ -82,6 +82,7 @@ public class HttpClientUtil {
             }
         });
         okHttpClient = okHttpClientBuilder.build();
+
     }
 
     public static void initHttpClientUtil(Context context, String cachePath) {
@@ -135,8 +136,8 @@ public class HttpClientUtil {
      */
     protected Headers createHeaders(Map<String, String> headers) {
         Headers.Builder headerBuilder = new Headers.Builder();
-        headerBuilder.add("Charset", "UTF-8");
-        headerBuilder.add("Accept-Encoding", "gzip,deflate");
+//        headerBuilder.add("Charset", "UTF-8");
+//        headerBuilder.add("Accept-Encoding", "gzip,deflate");
         if (headers != null && !headers.isEmpty()) {
 
             for (String key : headers.keySet()) {
@@ -306,7 +307,19 @@ public class HttpClientUtil {
 
             @Override
             public void onResponse(final Call call, final Response response) throws IOException {
+                KLog.e("获取响应成功...");
                 if (call.isCanceled()) {
+                    return;
+                }
+
+                if(!response.isSuccessful()||response.code()!=200){
+                    devidlerHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            responseCallBack.onError(call, new Exception("请求响应失败，响应码:"+response.code()));
+                            responseCallBack.onFinish(call);
+                        }
+                    });
                     return;
                 }
                 final Call resultCall = call;
@@ -329,7 +342,6 @@ public class HttpClientUtil {
                                 responseCallBack.onSuccess(call, finalResult);
                             } catch (Exception e) {
                                 KLog.e(e.getMessage());
-
                             }
                         }
                         responseCallBack.onFinish(resultCall);

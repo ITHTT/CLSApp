@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layout_load_more_content"
     android:orientation="horizontal"
     android:layout_width="match_parent"
@@ -7,14 +8,14 @@
     android:layout_gravity="center"
     android:gravity="center"
     android:padding="10dip">
-    <ProgressBar
+    <com.tysci.cls.views.widgets.progressview.CircularProgressView
         android:id="@+id/pbLoading"
-        android:indeterminateDrawable="@drawable/icon_progress_loading"
-        android:indeterminateDuration="600"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:indeterminate="true"
-        android:visibility="visible"/>
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        app:cpv_animAutostart="true"
+        app:cpv_indeterminate="true"
+        app:cpv_thickness="2dp"
+        app:cpv_color="@color/colorPrimary"/>
     <TextView
         android:id="@+id/tv_load_more_text"
         android:layout_width="wrap_content"

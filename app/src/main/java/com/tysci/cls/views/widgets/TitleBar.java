@@ -6,6 +6,9 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,6 +24,7 @@ public class TitleBar extends LinearLayout {
     private ImageView ivNextMenu01;
     private ImageView ivNextMenu02;
     private TextView tvNextMenu;
+    private Animation refreshAnimation;
 
     public TitleBar(Context context) {
         super(context);
@@ -112,6 +116,25 @@ public class TitleBar extends LinearLayout {
     public TextView getRightMenuTextView() {
         tvNextMenu.setVisibility(View.VISIBLE);
         return tvNextMenu;
+    }
+
+    public void setTitleBarRightRefresh(){
+        refreshAnimation= AnimationUtils.loadAnimation(this.getContext(), R.anim.anim_titlebar_refresh);
+        LinearInterpolator lin = new LinearInterpolator();
+        refreshAnimation.setInterpolator(lin);
+    }
+
+    public void startTitleBarRightRefresh(){
+        if(refreshAnimation!=null) {
+            ivNextMenu01.startAnimation(refreshAnimation);
+        }else{
+            setTitleBarRightRefresh();
+            ivNextMenu01.startAnimation(refreshAnimation);
+        }
+    }
+
+    public void stopTitleBarRefresh(){
+        ivNextMenu01.clearAnimation();
     }
 
 

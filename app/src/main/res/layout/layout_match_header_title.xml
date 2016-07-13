@@ -5,8 +5,8 @@
     android:layout_height="wrap_content">
     <View
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="#dddddd"/>
+        android:layout_height="6dp"
+        android:background="#eeeeee"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,7 +14,7 @@
         android:paddingBottom="12dp"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
-        android:background="#f8f8f8">
+        android:background="@drawable/match_title_bg">
         <TextView
             android:id="@+id/tv_match_count"
             android:layout_width="wrap_content"
@@ -29,8 +29,4 @@
             android:textSize="13sp"
             android:text="7月3日 星期日"/>
     </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="#dddddd"/>
 </LinearLayout>

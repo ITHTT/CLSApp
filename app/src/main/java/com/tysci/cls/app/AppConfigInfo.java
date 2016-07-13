@@ -9,7 +9,7 @@ import java.io.File;
  * Created by Administrator on 2015/11/26.
  */
 public class AppConfigInfo {
-    public static final String APP_DIR_NAME="BallQ";
+    public static final String APP_DIR_NAME="CLSApp";
     public static String APP_PATH=null;
     public static final String APP_HTTP_CACHE_DIR_NAME="httpcache";
     public static String APP_HTTP_CACHE_PATH=null;

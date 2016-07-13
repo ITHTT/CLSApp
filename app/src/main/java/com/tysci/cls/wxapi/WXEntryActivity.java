@@ -159,7 +159,8 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
 
             @Override
             public void onError(Call call, Exception error) {
-
+                dimssProgressDialog();
+                ToastUtil.show(WXEntryActivity.this,"请求失败");
             }
 
             @Override
@@ -177,6 +178,8 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
                         }
                     }
                 }
+                dimssProgressDialog();
+                ToastUtil.show(WXEntryActivity.this, "登录失败");
             }
 
             @Override
@@ -199,7 +202,8 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
 
                 @Override
                 public void onError(Call call, Exception error) {
-
+                    dimssProgressDialog();
+                    ToastUtil.show(WXEntryActivity.this,"请求失败");
                 }
 
                 @Override
@@ -221,7 +225,9 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
                         userWechatLogin(params);
                         return;
                     }
-                }
+                   }
+                    dimssProgressDialog();
+                    ToastUtil.show(WXEntryActivity.this, "登录失败");
                 }
 
                 @Override
@@ -244,7 +250,8 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
 
             @Override
             public void onError(Call call, Exception error) {
-
+                dimssProgressDialog();
+                ToastUtil.show(WXEntryActivity.this,"请求失败");
             }
 
             @Override
@@ -262,19 +269,22 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
                             JSONObject dataObj=resultObj.getJSONObject("data");
                             if(dataObj!=null&&!dataObj.isEmpty()){
                                 String token=dataObj.getString("token");
-                                //String userId=dataObj.getString("userId");
+                                String userId=dataObj.getString("userId");
                                 String account=dataObj.getString("account");
                                 if(!TextUtils.isEmpty(token)&&!TextUtils.isEmpty(account)){
                                     UserInfoUtils.setUserToken(WXEntryActivity.this, token);
-                                   // UserInfoUtils.setUserId(WXEntryActivity.this, userId);
+                                    UserInfoUtils.setUserId(WXEntryActivity.this, userId);
                                     UserInfoUtils.setUserAccount(WXEntryActivity.this, account);
-                                    finish();
+                                    UserInfoUtils.requestUserInfo(WXEntryActivity.this, Tag, account, true, loadingProgressDialog);
+                                    //finish();
                                     return;
                                 }
                             }
                         }
                     }
                 }
+                dimssProgressDialog();
+                ToastUtil.show(WXEntryActivity.this,"登录失败");
             }
 
             @Override

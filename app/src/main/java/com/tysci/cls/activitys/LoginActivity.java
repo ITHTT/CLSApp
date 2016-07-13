@@ -70,12 +70,10 @@ public class LoginActivity extends BaseActivity {
             ToastUtil.show(this, "请输入手机号码");
             return;
         }
-
         if(TextUtils.isEmpty(userPassword)){
             ToastUtil.show(this, "请输入密码");
             return;
         }
-
         showProgressDialog("登录中...");
         String url= HttpUrls.HTTP_HOST_URL+"auth/login";
         Map<String,String> params=new HashMap<String,String>(2);
@@ -89,6 +87,7 @@ public class LoginActivity extends BaseActivity {
 
             @Override
             public void onError(Call call, Exception error) {
+                dimssProgressDialog();
                 ToastUtil.show(LoginActivity.this,"请求失败");
             }
 
@@ -107,27 +106,28 @@ public class LoginActivity extends BaseActivity {
                             JSONObject dataObj=resultObj.getJSONObject("data");
                             if(dataObj!=null&&!dataObj.isEmpty()){
                                 String token=dataObj.getString("token");
-                                //String userId=dataObj.getString("userId");
+                                String userId=dataObj.getString("userId");
                                 String account=dataObj.getString("account");
-                                if(!TextUtils.isEmpty(token)&&!TextUtils.isEmpty(account)){
+                                if(!TextUtils.isEmpty(token)&&!TextUtils.isEmpty(account)&&!TextUtils.isEmpty(userId)){
                                     UserInfoUtils.setUserToken(LoginActivity.this, token);
-                                    //UserInfoUtils.setUserId(LoginActivity.this, userId);
+                                    UserInfoUtils.setUserId(LoginActivity.this, userId);
                                     UserInfoUtils.setUserAccount(LoginActivity.this, account);
                                     //EventBus.getDefault().post("refresh_user_info", AppConstantParams.EVENT_REFRESH_USER_INFO);
-                                    setResult(RESULT_OK);
-                                    finish();
+//                                    setResult(RESULT_OK);
+//                                    finish();
+                                    UserInfoUtils.requestUserInfo(LoginActivity.this,Tag,userPhone,true,loadingProgressDialog);
                                     return;
                                 }
                             }
                         }
                     }
                 }
+                dimssProgressDialog();
                 ToastUtil.show(LoginActivity.this, "登录失败");
             }
 
             @Override
             public void onFinish(Call call) {
-                dimssProgressDialog();
 
             }
         });

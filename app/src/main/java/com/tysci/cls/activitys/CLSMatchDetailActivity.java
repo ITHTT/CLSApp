@@ -79,22 +79,25 @@ public class CLSMatchDetailActivity extends BaseActivity{
         List<BaseFragment> fragments=new ArrayList<>(5);
 
         Bundle data=new Bundle();
-        data.putParcelable("match_info",matchEntity);
+        data.putParcelable("match_info", matchEntity);
 
         BaseFragment baseFragment=new CLSMatchLineupFragment();
         baseFragment.setArguments(data);
         fragments.add(baseFragment);
 
         baseFragment=new CLSMatchTipOffListFragment();
+        baseFragment.setArguments(data);
         fragments.add(baseFragment);
 
         baseFragment=new CLSMatchCommentBallFragment();
         fragments.add(baseFragment);
 
         baseFragment=new CLSMatchEventFragment();
+        baseFragment.setArguments(data);
         fragments.add(baseFragment);
 
         baseFragment=new CLSMatchStatisticsFragment();
+        baseFragment.setArguments(data);
         fragments.add(baseFragment);
 
         CustomFragmentPagerAdapter adapter=new CustomFragmentPagerAdapter(getSupportFragmentManager(),titles,fragments);
@@ -111,7 +114,6 @@ public class CLSMatchDetailActivity extends BaseActivity{
         GlideImageLoader.loadImage(this, matchEntity.getAwayTeamFlag(), R.mipmap.ic_launcher, ivAwayTeamIcon);
         tvHomeTeamScroe.setText(String.valueOf(matchEntity.getHomeTeamScore()));
         tvAwayTeamScore.setText(String.valueOf(matchEntity.getAwayTeamScore()));
-
     }
 
     @Override

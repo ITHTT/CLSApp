@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">中超赛场</string>
+    <string name="tip_load_complete">没有更多数据了</string>
 </resources>

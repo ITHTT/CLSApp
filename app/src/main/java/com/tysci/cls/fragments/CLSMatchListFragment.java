@@ -13,6 +13,7 @@ import com.tysci.cls.app.BaseFragment;
 import com.tysci.cls.modles.CLSMatchEntity;
 import com.tysci.cls.networks.HttpClientUtil;
 import com.tysci.cls.networks.HttpUrls;
+import com.tysci.cls.utils.KLog;
 import com.tysci.cls.views.adapters.CLSMatchAdapter;
 import com.tysci.cls.views.widgets.loadmorerecyclerview.AutoLoadMoreRecyclerView;
 import com.tysci.cls.views.widgets.recyclerviewstickyheader.StickyHeaderDecoration;
@@ -27,7 +28,7 @@ import okhttp3.Request;
 /**
  * Created by Administrator on 2016/7/7.
  */
-public class CLSMatchListFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener{
+public class CLSMatchListFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,AutoLoadMoreRecyclerView.OnLoadMoreListener{
     @Bind(R.id.swipeRefresh)
     protected SwipeRefreshLayout swipeRefresh;
     @Bind(R.id.recyclerView)
@@ -35,6 +36,8 @@ public class CLSMatchListFragment extends BaseFragment implements SwipeRefreshLa
 
     private List<CLSMatchEntity> matchEntityList=null;
     private CLSMatchAdapter adapter=null;
+
+    private boolean isRefreshing=false;
 
     @Override
     protected int getViewLayoutId() {
@@ -44,6 +47,7 @@ public class CLSMatchListFragment extends BaseFragment implements SwipeRefreshLa
     @Override
     protected void initViews(View view, Bundle savedInstanceState) {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setOnLoadMoreListener(this);
         swipeRefresh.setOnRefreshListener(this);
         setRefreshing();
         requestMatchListInfos();
@@ -71,6 +75,21 @@ public class CLSMatchListFragment extends BaseFragment implements SwipeRefreshLa
         }
     }
 
+    public void setIsRefreshing(boolean isRefreshing) {
+        this.isRefreshing = isRefreshing;
+    }
+
+    public boolean isRefreshing() {
+        return isRefreshing;
+    }
+
+    public void refreshMatchList(){
+        baseActivity.getTitleBar().startTitleBarRightRefresh();
+        this.isRefreshing=true;
+        setRefreshing();
+        //requestMatchListInfos();
+    }
+
 
     @Override
     protected View getLoadingTargetView() {
@@ -92,8 +111,9 @@ public class CLSMatchListFragment extends BaseFragment implements SwipeRefreshLa
 
     }
 
-    private void requestMatchListInfos(){
+    public void requestMatchListInfos(){
         String url= HttpUrls.HTTP_HOST_URL+"match/list";
+        KLog.e("url:"+url);
         HttpClientUtil.getHttpClientUtil().sendGetRequest(Tag, url, 60, new HttpClientUtil.StringResponseCallBack() {
             @Override
             public void onBefore(Request request) {
@@ -102,7 +122,22 @@ public class CLSMatchListFragment extends BaseFragment implements SwipeRefreshLa
 
             @Override
             public void onError(Call call, Exception error) {
-
+                if(matchEntityList==null){
+                    matchEntityList=new ArrayList<CLSMatchEntity>();
+                    adapter=new CLSMatchAdapter(matchEntityList);
+                    StickyHeaderDecoration decoration=new StickyHeaderDecoration(adapter);
+                    recyclerView.setAdapter(adapter);
+                    recyclerView.addItemDecoration(decoration);
+                }
+                if(matchEntityList.isEmpty()){
+                    recyclerView.setLoadMoreDataFailed(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            recyclerView.setLoadingMore();
+                            requestMatchListInfos();
+                        }
+                    });
+                }
             }
 
             @Override
@@ -110,9 +145,9 @@ public class CLSMatchListFragment extends BaseFragment implements SwipeRefreshLa
                 if(!TextUtils.isEmpty(response)){
                     JSONObject obj=JSONObject.parseObject(response);
                     if(obj!=null&&!obj.isEmpty()){
-                        int statusCode=obj.getIntValue("statusCode");
+                        int statusCode=obj.getIntValue("code");
                         if(statusCode==200){
-                            JSONObject dataObj=obj.getJSONObject("dataMap");
+                            JSONObject dataObj=obj.getJSONObject("data");
                             if(dataObj!=null&&!dataObj.isEmpty()){
                                 JSONArray matchArrays=dataObj.getJSONArray("teamMatchs");
                                 if(matchArrays!=null&&!matchArrays.isEmpty()){
@@ -128,16 +163,28 @@ public class CLSMatchListFragment extends BaseFragment implements SwipeRefreshLa
                                     }else{
                                         adapter.notifyDataSetChanged();
                                     }
+                                    recyclerView.setLoadMoreDataComplete(R.string.tip_load_complete);
+                                    return;
                                 }
                             }
                         }
                     }
                 }
+                if(matchEntityList==null){
+                    matchEntityList=new ArrayList<CLSMatchEntity>();
+                    adapter=new CLSMatchAdapter(matchEntityList);
+                    StickyHeaderDecoration decoration=new StickyHeaderDecoration(adapter);
+                    recyclerView.setAdapter(adapter);
+                    recyclerView.addItemDecoration(decoration);
+                }
+                recyclerView.setLoadMoreDataComplete(R.string.tip_load_complete);
             }
 
             @Override
             public void onFinish(Call call) {
                 onRefreshCompelete();
+                isRefreshing=false;
+                baseActivity.getTitleBar().stopTitleBarRefresh();
             }
         });
     }
@@ -167,5 +214,10 @@ public class CLSMatchListFragment extends BaseFragment implements SwipeRefreshLa
     @Override
     public void onRefresh() {
         requestMatchListInfos();
+    }
+
+    @Override
+    public void onLoadMore() {
+
     }
 }

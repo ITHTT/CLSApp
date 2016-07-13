@@ -7,15 +7,22 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.pgyersdk.update.PgyUpdateManager;
 import com.tysci.cls.R;
 import com.tysci.cls.app.BaseActivity;
 import com.tysci.cls.fragments.CLSMatchListFragment;
 import com.tysci.cls.fragments.CLSWebViewFragment;
+import com.tysci.cls.modles.UserInfoEntity;
+import com.tysci.cls.networks.GlideImageLoader;
 import com.tysci.cls.networks.HttpUrls;
+import com.tysci.cls.utils.KLog;
 import com.tysci.cls.utils.StatusBarCompat;
+import com.tysci.cls.utils.UserInfoUtils;
+import com.tysci.cls.views.widgets.CircleImageView;
 import com.tysci.cls.views.widgets.MainMenuTab;
 import com.tysci.cls.views.widgets.slidingmenu.SlidingMenu;
 import com.tysci.cls.wxapi.WXEntryActivity;
@@ -58,6 +65,7 @@ public class MainActivity extends BaseActivity{
         }
         initSlidingMenu();
         setTitleBarLeftIcon(R.mipmap.icon_main_left_menu);
+        titleBar.setRightMenuIcon(R.mipmap.icon_main_titlebar_refresh, this);
         PgyUpdateManager.register(this);
 
         tabQiuDui.setOnClickListener(this);
@@ -67,6 +75,10 @@ public class MainActivity extends BaseActivity{
         ivGame.setOnClickListener(this);
         //initWebView();
         setSelectedTab(R.id.iv_game);
+
+        if(UserInfoUtils.checkLogin(this)){
+            setUserInfo(UserInfoUtils.getUserInfo(this));
+        }
     }
 
     private void initSlidingMenu(){
@@ -81,6 +93,7 @@ public class MainActivity extends BaseActivity{
         //slidingMenu.attachToActivity(this,SlidingMenu.SLIDING_CONTENT,true);
         View leftMenuView=slidingMenu.getMenu();
         leftMenuView.findViewById(R.id.layout_user_default_info).setOnClickListener(this);
+        leftMenuView.findViewById(R.id.bt_exit_login).setOnClickListener(this);
     }
 
     private void hideFragments(int tab,FragmentTransaction transaction){
@@ -109,6 +122,7 @@ public class MainActivity extends BaseActivity{
 
     private void setTabPager(int tab,String url){
         FragmentTransaction transaction=null;
+        titleBar.getRightMenuImageView().setVisibility(View.GONE);
         if(tab!=currentTab){
             //setSelectedTab(tab);
             transaction=this.getSupportFragmentManager().beginTransaction();
@@ -136,6 +150,7 @@ public class MainActivity extends BaseActivity{
                 }
                 break;
             case R.id.iv_game:
+                titleBar.getRightMenuImageView().setVisibility(View.VISIBLE);
                 if(matchFragment==null){
                     matchFragment=new CLSMatchListFragment();
                    // matchFragment.setUrl(url);
@@ -202,11 +217,27 @@ public class MainActivity extends BaseActivity{
         setSelectedTab(view.getId());
         switch (view.getId()){
             case R.id.layout_user_default_info:
-                Intent intent=new Intent(this,WXEntryActivity.class);
-                startActivity(intent);
+                if(!UserInfoUtils.checkLogin(this)) {
+                    Intent intent = new Intent(this, WXEntryActivity.class);
+                    startActivity(intent);
+                }
+                break;
+            case R.id.iv_titlebar_next_menu01:
+                if(!matchFragment.isRefreshing()){
+                    matchFragment.refreshMatchList();
+                    titleBar.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            matchFragment.requestMatchListInfos();
+                        }
+                    },2000);
+                }
+                break;
+            case R.id.bt_exit_login:
+                UserInfoUtils.exitLogin(this);
+                slidingMenu.toggle();
                 break;
         }
-
     }
 
     @Override
@@ -219,25 +250,37 @@ public class MainActivity extends BaseActivity{
 
     }
 
-//    private void initWebView(){
-//        WebSettings webSettings = webView.getSettings();
-//        webSettings.setJavaScriptEnabled(true);
-//        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-//        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
-//        webSettings.setUseWideViewPort(true);
-//        webSettings.setAllowFileAccess(true);
-//        webSettings.setLoadWithOverviewMode(true);
-//        webSettings.setAppCacheEnabled(false);
-//        webSettings.setSupportZoom(false);
-//        webView.setWebViewClient(new WebViewClient(){
-//            @Override
-//            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-//                System.out.println("url:"+url);
-//                return filterWebViewUrl(url)||super.shouldOverrideUrlLoading(view, url);
-//            }
-//        });
-//        webView.setWebChromeClient(new WebChromeClient());
-//    }
+    @Override
+    protected void userLogin(UserInfoEntity userInfoEntity) {
+        super.userLogin(userInfoEntity);
+        KLog.e("用户登录成功");
+        setUserInfo(userInfoEntity);
+    }
+
+    @Override
+    protected void userExit() {
+        super.userExit();
+        View view=slidingMenu.getMenu();
+        Button btExitLogin= (Button) view.findViewById(R.id.bt_exit_login);
+        btExitLogin.setVisibility(View.GONE);
+        CircleImageView ivUserHeader= (CircleImageView) view.findViewById(R.id.iv_user_header);
+        TextView tvUserName=(TextView)view.findViewById(R.id.tv_user_name);
+        ivUserHeader.setImageResource(R.mipmap.icon_camera);
+        tvUserName.setText("登录后才能竞猜哦");
+
+    }
+
+    private void setUserInfo(UserInfoEntity userInfoEntity){
+        if(userInfoEntity!=null){
+            View view=slidingMenu.getMenu();
+            Button btExitLogin= (Button) view.findViewById(R.id.bt_exit_login);
+            btExitLogin.setVisibility(View.VISIBLE);
+            CircleImageView ivUserHeader= (CircleImageView) view.findViewById(R.id.iv_user_header);
+            TextView tvUserName=(TextView)view.findViewById(R.id.tv_user_name);
+            GlideImageLoader.loadImage(this,userInfoEntity.getProfile().getPortrait(),R.mipmap.icon_user_default,ivUserHeader);
+            tvUserName.setText(userInfoEntity.getProfile().getNickname());
+        }
+    }
 
     public void setSelectedTab(int id){
         String tag=null;
@@ -250,13 +293,13 @@ public class MainActivity extends BaseActivity{
             ivGame.setSelected(false);
             tag="team/list";
         }else if(id==R.id.tab_jifen){
-            titleBar.setTitleBarTitle("中超赛场-积分榜");
+            titleBar.setTitleBarTitle("中超赛场-数据");
             tabQiuDui.setTabChecked(false);
             tabJiFen.setTabChecked(true);
             tabXinWen.setTabChecked(false);
             tabYaGuan.setTabChecked(false);
             ivGame.setSelected(false);
-            tag="score/group/list?uniqueTournamentId=649";
+            tag="score/database";
         }else if(id==R.id.tab_xinwen){
             titleBar.setTitleBarTitle("中超赛场-新闻");
             tabQiuDui.setTabChecked(false);
@@ -296,7 +339,6 @@ public class MainActivity extends BaseActivity{
             return true;
         }
         return false;
-
     }
 
 }

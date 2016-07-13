@@ -4,7 +4,7 @@ package com.tysci.cls.networks;
  * Created by Administrator on 2016/6/29.
  */
 public class HttpUrls {
-    public static final String HOST_URL="http://csl.ballq.cn/";
+    public static final String HOST_URL="http://192.168.10.21:8080/";
 
     public static final String HTTP_HOST_URL="http://192.168.10.21:8080/api/v1/";
 

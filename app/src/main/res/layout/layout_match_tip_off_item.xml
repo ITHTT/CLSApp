@@ -2,11 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="#ffffff">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp">
+        android:paddingTop="15dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,7 +32,9 @@
                         android:id="@+id/tv_user_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
                         android:textSize="14sp"
+                        android:textColor="#78a639"
                         android:text="球商APP作家:牛头买彩"/>
                     <View
                         android:layout_width="match_parent"
@@ -41,6 +44,7 @@
                         android:id="@+id/tv_user_betting_info"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
                         android:textSize="13sp"
                         android:text="投注场次:10 亚盘:50% 盈利:-38.33%"/>
                 </LinearLayout>
@@ -58,15 +62,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:textSize="13sp"/>
+                android:paddingBottom="15dp"
+                android:lineSpacingExtra="1.5dp"
+                android:textSize="14sp"/>
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_betting_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/icon_tip_game_win"
+            android:layout_marginTop="50dp"
+            android:layout_marginRight="16dp"
+            android:layout_gravity="right"/>
     </FrameLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1.5dp"
-        android:background="@color/colorPrimary"
+        android:background="#78a639"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"/>
 </LinearLayout>
