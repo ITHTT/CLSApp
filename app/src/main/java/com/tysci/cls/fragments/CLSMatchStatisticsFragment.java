@@ -1,6 +1,7 @@
 package com.tysci.cls.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
@@ -44,6 +45,24 @@ public class CLSMatchStatisticsFragment extends BaseFragment implements SwipeRef
     private List<CLSMatchStatisticsEntity> matchStatisticsEntityList=null;
     private CLSMatchStatisticsAdapter adapter=null;
 
+    private boolean isRunning=false;
+    private Handler handler=new Handler();
+    private Runnable task=new Runnable() {
+        @Override
+        public void run() {
+            if(swipeRefresh!=null){
+                if(swipeRefresh.isRefreshing()){
+                    return;
+                }
+                if(!isRunning) {
+                    isRunning = true;
+                    requestMatchStatisticsInfo(matchEntity.getId());
+                    handler.postDelayed(task, 60000);
+                }
+            }
+        }
+    };
+
     @Override
     protected int getViewLayoutId() {
         return R.layout.fragment_match_statistics;
@@ -62,6 +81,7 @@ public class CLSMatchStatisticsFragment extends BaseFragment implements SwipeRef
                 tvAwayTeamInfo.setText(matchEntity.getAwayTeamName());
                 setRefreshing();
                 requestMatchStatisticsInfo(matchEntity.getId());
+                handler.postDelayed(task, 60000);
             }
         }
     }
@@ -99,7 +119,7 @@ public class CLSMatchStatisticsFragment extends BaseFragment implements SwipeRef
         HttpClientUtil.getHttpClientUtil().sendGetRequest(Tag, url, 0, new HttpClientUtil.StringResponseCallBack() {
             @Override
             public void onBefore(Request request) {
-
+                isRunning=true;
             }
 
             @Override
@@ -166,6 +186,7 @@ public class CLSMatchStatisticsFragment extends BaseFragment implements SwipeRef
 
             @Override
             public void onFinish(Call call) {
+                isRunning=false;
                 onRefreshCompelete();
             }
         });
@@ -195,5 +216,11 @@ public class CLSMatchStatisticsFragment extends BaseFragment implements SwipeRef
     public void onRefresh() {
         requestMatchStatisticsInfo(matchEntity.getId());
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(task);
     }
 }

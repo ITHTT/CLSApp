@@ -16,6 +16,7 @@ import com.tysci.cls.modles.UserInfoEntity;
 import com.tysci.cls.modles.event.EventObject;
 import com.tysci.cls.modles.event.EventType;
 import com.tysci.cls.networks.HttpClientUtil;
+import com.tysci.cls.utils.KLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -144,6 +145,11 @@ public abstract class BaseFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         HttpClientUtil.getHttpClientUtil().cancelTag(Tag);
+        KLog.e(contentView+"");
+        if(contentView!=null) {
+            contentView.destroyDrawingCache();
+            contentView = null;
+        }
         ButterKnife.unbind(this);
         if (!isCanceledEventBus()) {
             EventBus.getDefault().unregister(this);

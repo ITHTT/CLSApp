@@ -202,6 +202,7 @@ public class CLSMatchLineupFragment extends BaseFragment implements SwipeRefresh
                 /**添加标题栏数据*/
                 lineupEntity=new CLSMatchLineupEntity();
                 lineupEntity.setHomePlayerName(matchEntity.getHomeTeamName());
+
                 lineupEntity.setAwayPlayerName(matchEntity.getAwayTeamName());
                 lineupEntity.setType(1);
                 datas.add(lineupEntity);

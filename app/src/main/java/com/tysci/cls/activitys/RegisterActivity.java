@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -39,6 +40,8 @@ public class RegisterActivity extends BaseActivity {
     protected EditText etVcode;
     @Bind(R.id.tv_get_vcode)
     protected TextView tvGetVCode;
+    @Bind(R.id.cb_agree_register)
+    protected CheckBox cbAgree;
 
     private String userPhone;
     private String userPassword;
@@ -97,6 +100,11 @@ public class RegisterActivity extends BaseActivity {
         if(userNickName.length()<2){
            ToastUtil.show(this, "昵称至少为2个字符组成");
             etUserNickName.requestFocus();
+            return;
+        }
+
+        if(!cbAgree.isChecked()){
+            ToastUtil.show(this,"您尚未同意《中超赛场用户协议》");
             return;
         }
 
@@ -192,6 +200,12 @@ public class RegisterActivity extends BaseActivity {
     @Override
     protected void notifyEvent(String action, Bundle data) {
 
+    }
+
+    @OnClick(R.id.tv_user_agreement)
+    protected void onClickUserAgreementInfo(View view){
+        Intent intent=new Intent(this,CLSUserAgreementActivity.class);
+        startActivity(intent);
     }
 
 }

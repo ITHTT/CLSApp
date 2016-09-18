@@ -53,6 +53,8 @@ public class CLSMatchEntity implements Parcelable {
     private int awayTeamScore;
     private String groupName;
     private String matchDateWeek;
+    private int chatRoomStatus;
+    private String chatRoomId;
 
     public void setStatus(int status) {
         this.status = status;
@@ -230,6 +232,22 @@ public class CLSMatchEntity implements Parcelable {
         this.matchDateWeek = matchDateWeek;
     }
 
+    public String getChatRoomId() {
+        return chatRoomId;
+    }
+
+    public void setChatRoomId(String chatRoomId) {
+        this.chatRoomId = chatRoomId;
+    }
+
+    public int getChatRoomStatus() {
+        return chatRoomStatus;
+    }
+
+    public void setChatRoomStatus(int chatRoomStatus) {
+        this.chatRoomStatus = chatRoomStatus;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -259,6 +277,8 @@ public class CLSMatchEntity implements Parcelable {
         dest.writeInt(this.awayTeamScore);
         dest.writeString(this.groupName);
         dest.writeString(this.matchDateWeek);
+        dest.writeInt(this.chatRoomStatus);
+        dest.writeString(this.chatRoomId);
     }
 
     public CLSMatchEntity() {
@@ -287,6 +307,8 @@ public class CLSMatchEntity implements Parcelable {
         this.awayTeamScore = in.readInt();
         this.groupName = in.readString();
         this.matchDateWeek = in.readString();
+        this.chatRoomStatus=in.readInt();
+        this.chatRoomId=in.readString();
     }
 
     public static final Parcelable.Creator<CLSMatchEntity> CREATOR = new Parcelable.Creator<CLSMatchEntity>() {

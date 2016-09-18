@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#ebf0f5">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -15,16 +16,17 @@
             <LinearLayout
                 android:id="@+id/layout_user_default_info"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:paddingBottom="20dp"
+                android:layout_height="120dp"
                 android:orientation="vertical"
-                android:gravity="center_horizontal|bottom"
-                android:visibility="visible">
+                android:gravity="center"
+                android:visibility="visible"
+                android:background="@drawable/match_white_bg">
                 <com.tysci.cls.views.widgets.CircleImageView
                     android:id="@+id/iv_user_header"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@mipmap/icon_camera"/>
+                    android:layout_marginTop="15dp"
+                    android:src="@mipmap/icon_user_default"/>
                 <TextView
                     android:id="@+id/tv_user_name"
                     android:layout_width="wrap_content"
@@ -181,27 +183,29 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_weight="1"
-                android:background="#ffffff">
+                android:layout_weight="1">
                 <LinearLayout
                     android:id="@+id/layout_user_quiz_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:background="#ffffff">
                     <TextView
                         android:id="@+id/tv_user_quiz_list"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         android:paddingLeft="15dp"
-                        android:textSize="14sp"
-                        android:text="战绩"
-                        android:drawablePadding="10dp"/>
+                        android:textSize="13sp"
+                        android:text="我的回复"
+                        android:drawablePadding="10dp"
+                        android:drawableLeft="@mipmap/icon_user_replay"/>
                     <TextView
                         android:id="@+id/tv_user_quiz_message"
                         android:layout_width="15dp"
@@ -214,20 +218,6 @@
                 </LinearLayout>
 
                 <View
-                    style="@style/HorizontalLineStyle"
-                    android:visibility="gone"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="15dp"
-                    android:textSize="14sp"
-                    android:text="我的爆料"
-                    android:background="#0f1117"
-                    android:drawablePadding="10dp"
-                    android:visibility="gone"/>
-                <View
                     style="@style/HorizontalLineStyle"/>
                 <LinearLayout
                     android:id="@+id/layout_user_comments"
@@ -235,38 +225,44 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:background="#ffffff">
                     <TextView
                         android:id="@+id/tv_user_comments"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         android:paddingLeft="15dp"
-                        android:textSize="14sp"
-                        android:text="我的评论"
-                        android:drawablePadding="10dp"/>
+                        android:textSize="13sp"
+                        android:text="加入中超粉丝群"
+                        android:drawablePadding="10dp"
+                        android:drawableLeft="@mipmap/icon_user_cls_qun"/>
                     <TextView
                         android:id="@+id/tv_user_comment_message"
-                        android:layout_width="15dp"
+                        android:layout_width="match_parent"
                         android:layout_height="15dp"
-                        android:layout_marginLeft="10dp"
-                        android:textSize="11sp"
-                        android:text="0"
-                        android:gravity="center"
-                        android:visibility="gone"/>
+                        android:layout_marginRight="15dp"
+                        android:textSize="12sp"
+                        android:textIsSelectable="true"
+                        android:text="565351436"
+                        android:gravity="center_vertical|right"/>
                 </LinearLayout>
-
                 <View
                     style="@style/HorizontalLineStyle"/>
                 <TextView
                     android:id="@+id/tv_app_setting_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="#ffffff"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
                     android:paddingLeft="15dp"
-                    android:textSize="14sp"
-                    android:text="版本1.0"
-                    android:drawablePadding="10dp"/>
+                    android:textSize="13sp"
+                    android:text="版本2.0"
+                    android:drawablePadding="10dp"
+                    android:drawableLeft="@mipmap/icon_user_setting"/>
                 <View
                     style="@style/HorizontalLineStyle"/>
             </LinearLayout>
@@ -275,9 +271,10 @@
     <Button
         android:id="@+id/bt_exit_login"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="35dp"
         android:layout_gravity="center_horizontal"
-        android:background="#dddddd"
+        android:layout_margin="10dp"
+        android:background="@drawable/button_selector"
         android:textSize="14sp"
         android:visibility="gone"
         android:text="退出登录"/>

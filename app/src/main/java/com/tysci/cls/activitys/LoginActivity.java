@@ -3,10 +3,13 @@ package com.tysci.cls.activitys;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
 import com.alibaba.fastjson.JSONObject;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
 import com.tysci.cls.R;
 import com.tysci.cls.app.BaseActivity;
 import com.tysci.cls.networks.HttpClientUtil;
@@ -53,7 +56,9 @@ public class LoginActivity extends BaseActivity {
             loadingProgressDialog=new LoadingProgressDialog(this);
         }
         loadingProgressDialog.setMessage(msg);
-        loadingProgressDialog.show();
+        if(!loadingProgressDialog.isShowing()) {
+            loadingProgressDialog.show();
+        }
     }
 
     private void dimssProgressDialog(){
@@ -112,13 +117,13 @@ public class LoginActivity extends BaseActivity {
                                     UserInfoUtils.setUserToken(LoginActivity.this, token);
                                     UserInfoUtils.setUserId(LoginActivity.this, userId);
                                     UserInfoUtils.setUserAccount(LoginActivity.this, account);
-                                    //EventBus.getDefault().post("refresh_user_info", AppConstantParams.EVENT_REFRESH_USER_INFO);
-//                                    setResult(RESULT_OK);
-//                                    finish();
-                                    UserInfoUtils.requestUserInfo(LoginActivity.this,Tag,userPhone,true,loadingProgressDialog);
+                                    loginHuanXinServer(account, account);
+                                    UserInfoUtils.requestUserInfo(LoginActivity.this, Tag, userPhone, true, loadingProgressDialog);
                                     return;
                                 }
                             }
+                        }else{
+                            ToastUtil.show(LoginActivity.this, message);
                         }
                     }
                 }
@@ -129,6 +134,40 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onFinish(Call call) {
 
+            }
+        });
+    }
+
+    private void loginHuanXinServer(String uid,String password){
+        KLog.e("userId:"+uid);
+        KLog.e("password:"+password);
+        EMClient.getInstance().login(uid,password,new EMCallBack() {//回调
+            @Override
+            public void onSuccess() {
+                EMClient.getInstance().groupManager().loadAllGroups();
+                EMClient.getInstance().chatManager().loadAllConversations();
+                UserInfoUtils.setUserHuanxinLoginFlag(LoginActivity.this,true);
+                Log.d("main", "登录聊天服务器成功！");
+               // UserInfoUtils.requestUserInfo(LoginActivity.this, Tag, userPhone, true, loadingProgressDialog);
+            }
+
+            @Override
+            public void onProgress(int progress, String status) {
+                KLog.e("status:"+status);
+            }
+
+            @Override
+            public void onError(int code, final String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtil.show(LoginActivity.this, "登录失败");
+                        KLog.e("message:" + message);
+                        Log.d("main", "登录聊天服务器失败！");
+                        //UserInfoUtils.clearUserInfo(LoginActivity.this);
+                        //dimssProgressDialog();
+                    }
+                });
             }
         });
     }

@@ -19,7 +19,6 @@ public class LoginOrRegisterActivity extends BaseActivity{
     @Override
     protected void initViews() {
         setTitle("登录/注册");
-
     }
 
     @Override

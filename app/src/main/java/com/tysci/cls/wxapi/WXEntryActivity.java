@@ -3,9 +3,12 @@ package com.tysci.cls.wxapi;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import com.alibaba.fastjson.JSONObject;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
 import com.tencent.mm.sdk.modelbase.BaseReq;
 import com.tencent.mm.sdk.modelbase.BaseResp;
 import com.tencent.mm.sdk.modelmsg.SendAuth;
@@ -160,17 +163,17 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
             @Override
             public void onError(Call call, Exception error) {
                 dimssProgressDialog();
-                ToastUtil.show(WXEntryActivity.this,"请求失败");
+                ToastUtil.show(WXEntryActivity.this, "请求失败");
             }
 
             @Override
             public void onSuccess(Call call, String response) {
                 KLog.json(response);
-                if(!TextUtils.isEmpty(response)){
-                    JSONObject object=JSONObject.parseObject(response);
-                    if(object!=null&&!object.isEmpty()){
-                        String token=object.getString("access_token");
-                        if(!TextUtils.isEmpty(token)){
+                if (!TextUtils.isEmpty(response)) {
+                    JSONObject object = JSONObject.parseObject(response);
+                    if (object != null && !object.isEmpty()) {
+                        String token = object.getString("access_token");
+                        if (!TextUtils.isEmpty(token)) {
                             UserInfoUtils.setUserWechatInfo(WXEntryActivity.this, response);
                             getWxUserInfo(object);
                             //this.finish();
@@ -251,6 +254,7 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
             @Override
             public void onError(Call call, Exception error) {
                 dimssProgressDialog();
+                UserInfoUtils.clearUserInfo(WXEntryActivity.this);
                 ToastUtil.show(WXEntryActivity.this,"请求失败");
             }
 
@@ -261,9 +265,6 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
                     JSONObject resultObj=JSONObject.parseObject(response);
                     if(resultObj!=null&&!resultObj.isEmpty()){
                         String message=resultObj.getString("message");
-                        if(!TextUtils.isEmpty(message)){
-                            ToastUtil.show(WXEntryActivity.this, message);
-                        }
                         int statusCode=resultObj.getIntValue("code");
                         if(statusCode==200){
                             JSONObject dataObj=resultObj.getJSONObject("data");
@@ -272,13 +273,18 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
                                 String userId=dataObj.getString("userId");
                                 String account=dataObj.getString("account");
                                 if(!TextUtils.isEmpty(token)&&!TextUtils.isEmpty(account)){
+                                    ToastUtil.show(WXEntryActivity.this,message);
                                     UserInfoUtils.setUserToken(WXEntryActivity.this, token);
                                     UserInfoUtils.setUserId(WXEntryActivity.this, userId);
                                     UserInfoUtils.setUserAccount(WXEntryActivity.this, account);
                                     UserInfoUtils.requestUserInfo(WXEntryActivity.this, Tag, account, true, loadingProgressDialog);
-                                    //finish();
+                                    loginHuanXinServer(account, account);
                                     return;
                                 }
+                            }
+                        }else{
+                            if(!TextUtils.isEmpty(message)){
+                                ToastUtil.show(WXEntryActivity.this, message);
                             }
                         }
                     }
@@ -290,6 +296,40 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
             @Override
             public void onFinish(Call call) {
 
+            }
+        });
+    }
+
+    private void loginHuanXinServer(final String uid,String password){
+        KLog.e("userId:"+uid);
+        KLog.e("password:"+password);
+        EMClient.getInstance().login(uid, password, new EMCallBack() {//回调
+            @Override
+            public void onSuccess() {
+                EMClient.getInstance().groupManager().loadAllGroups();
+                EMClient.getInstance().chatManager().loadAllConversations();
+                UserInfoUtils.setUserHuanxinLoginFlag(WXEntryActivity.this,true);
+                Log.d("main", "登录聊天服务器成功！");
+                //UserInfoUtils.requestUserInfo(WXEntryActivity.this, Tag, uid, true, loadingProgressDialog);
+            }
+
+            @Override
+            public void onProgress(int progress, String status) {
+                KLog.e("status:" + status);
+            }
+
+            @Override
+            public void onError(int code, final String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //ToastUtil.show(WXEntryActivity.this, "登录失败");
+                        KLog.e("message:" + message);
+                        Log.d("main", "登录聊天服务器失败！");
+//                        UserInfoUtils.clearUserInfo(WXEntryActivity.this);
+//                        dimssProgressDialog();
+                    }
+                });
             }
         });
     }
@@ -401,11 +441,10 @@ public class WXEntryActivity extends BaseActivity implements IWXAPIEventHandler 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==RESULT_OK){
-            KLog.e("用户登录成功。。。");
-//            EventBus.getDefault().post(loginTag, AppConstantParams.EVENT_USER_LOGIN_SUCCESS);
-//            PullService.startPullService(this);
-            this.setResult(RESULT_OK);
-            this.finish();
+            if(requestCode==REQUEST_CODE_USER_LOGIN){
+                KLog.e("用户登录成功。。。");
+                this.finish();
+            }
         }
     }
 

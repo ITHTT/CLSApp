@@ -23,7 +23,22 @@
     <style name="HorizontalLineStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">0.5dp</item>
-        <item name="android:background">@color/colorLine</item>
+        <item name="android:background">@color/gray</item>
     </style>
+
+    <style name="PhotoSelectDialogStyle" parent="android:style/Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="PopwindowAnimStyle">
+        <item name="android:windowEnterAnimation">@anim/anim_popwindow_show</item>
+        <item name="android:windowExitAnimation">@anim/anim_popwindow_hide</item>
+    </style>
+
+    <style name="PhotoSelectAnimStyle">
+        <item name="android:windowEnterAnimation">@anim/photo_dialog_in_anim</item>
+        <item name="android:windowExitAnimation">@anim/photo_dialog_out_anim</item>
+    </style>
+
 
 </resources>

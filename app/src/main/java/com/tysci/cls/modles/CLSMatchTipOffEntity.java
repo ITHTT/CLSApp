@@ -71,7 +71,7 @@ public class CLSMatchTipOffEntity {
     private String cont;
     private String etype;
     private String fname;
-    private float ror;
+    private String ror;
     private String btyc;
     private String atname;
     private String comcount;
@@ -92,7 +92,7 @@ public class CLSMatchTipOffEntity {
     private String pt;
     private String tourname;
     private String otype;
-    private float wins;
+    private String wins;
     private String htid;
 
     public void setFid(String fid) {
@@ -175,7 +175,7 @@ public class CLSMatchTipOffEntity {
         this.fname = fname;
     }
 
-    public void setRor(float ror) {
+    public void setRor(String ror) {
         this.ror = ror;
     }
 
@@ -259,7 +259,7 @@ public class CLSMatchTipOffEntity {
         this.otype = otype;
     }
 
-    public void setWins(float wins) {
+    public void setWins(String wins) {
         this.wins = wins;
     }
 
@@ -347,7 +347,7 @@ public class CLSMatchTipOffEntity {
         return fname;
     }
 
-    public float getRor() {
+    public String getRor() {
         return ror;
     }
 
@@ -431,7 +431,7 @@ public class CLSMatchTipOffEntity {
         return otype;
     }
 
-    public float getWins() {
+    public String getWins() {
         return wins;
     }
 

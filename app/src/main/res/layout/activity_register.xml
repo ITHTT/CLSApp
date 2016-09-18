@@ -3,12 +3,14 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     android:fitsSystemWindows="true">
     <include
         layout="@layout/layout_title_bar"/>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@mipmap/icon_login_register_bg"
         android:scrollbars="none">
         <LinearLayout
             android:layout_width="match_parent"
@@ -138,19 +140,32 @@
                     android:textColor="@color/textColor"/>
             </LinearLayout>
 
-            <CheckBox
-                android:id="@+id/cb_agree_register"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:textSize="13sp"
-                android:textColor="@color/textColor"
-                android:button="@drawable/bg_user_checkbox_selector"
-                android:paddingLeft="10dp"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:checked="true"
-                android:text="注册并同意《中超赛场用户协议》"/>
+                android:layout_marginTop="10dp">
+                <CheckBox
+                    android:id="@+id/cb_agree_register"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/white"
+                    android:button="@drawable/bg_user_checkbox_selector"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:checked="true"
+                    android:text="注册并同意"/>
+                <TextView
+                    android:id="@+id/tv_user_agreement"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/white"
+                    android:autoLink="all"
+                    android:text="《中超赛场用户协议》"/>
+            </LinearLayout>
+
 
             <Button
                 android:id="@+id/bt_register"

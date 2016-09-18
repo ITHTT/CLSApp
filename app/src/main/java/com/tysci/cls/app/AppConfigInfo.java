@@ -20,8 +20,9 @@ public class AppConfigInfo {
     public static String APP_LOG_PATH=null;
     public static final String APP_IMAGE_DIR_NAME="imagecache";
     public static String APP_IMAGE_PATH=null;
+    public static final String APP_VIDEO_DIR_NAME="videos";
+    public static String APP_VIDEO_PATH=null;
 
-    public static final int REQUEST_CODE_USER_LOGIN=0x0001;
 
     private static boolean isInit=false;
 
@@ -63,6 +64,12 @@ public class AppConfigInfo {
                 imageDir.mkdirs();
             }
             APP_IMAGE_PATH = imageDir.getAbsolutePath();
+
+            File videoDir=new File(APP_PATH+File.separator+APP_VIDEO_DIR_NAME);
+            if (!videoDir.exists()) {
+                videoDir.mkdirs();
+            }
+            APP_VIDEO_PATH = videoDir.getAbsolutePath();
             isInit=true;
         }
 

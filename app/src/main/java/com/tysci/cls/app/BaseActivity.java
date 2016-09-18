@@ -201,11 +201,11 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        /**取消网络请求*/
+        HttpClientUtil.getHttpClientUtil().cancelTag(Tag);
         ButterKnife.unbind(this);
         if (!isCanceledEventBus()) {
             EventBus.getDefault().unregister(this);
         }
-        /**取消网络请求*/
-        HttpClientUtil.getHttpClientUtil().cancelTag(Tag);
     }
 }

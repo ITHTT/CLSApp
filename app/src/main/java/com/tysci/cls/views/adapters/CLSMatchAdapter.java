@@ -44,8 +44,13 @@ implements StickyHeaderAdapter<CLSMatchAdapter.CLSMatchViewHolder>{
         holder.tvMatchTime.setText(info.getMatchTime());
         holder.tvHomeTeamName.setText(info.getHomeTeamName());
         holder.tvAwayTeamName.setText(info.getAwayTeamName());
-        holder.tvHomeTeamScore.setText(String.valueOf(info.getHomeTeamScore()));
-        holder.tvAwayTeamScore.setText(String.valueOf(info.getAwayTeamScore()));
+        if(info.getStatus()!=0) {
+            holder.tvHomeTeamScore.setText(String.valueOf(info.getHomeTeamScore()));
+            holder.tvAwayTeamScore.setText(String.valueOf(info.getAwayTeamScore()));
+        }else{
+            holder.tvHomeTeamScore.setText("");
+            holder.tvAwayTeamScore.setText("");
+        }
 
         GlideImageLoader.loadImage(holder.itemView.getContext(), info.getHomeTeamFlag(), R.mipmap.ic_launcher, holder.ivHomeTeamIcon);
         GlideImageLoader.loadImage(holder.itemView.getContext(),info.getAwayTeamFlag(),R.mipmap.ic_launcher,holder.ivAwayTeamIcon);

@@ -1,6 +1,7 @@
 package com.tysci.cls.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
@@ -49,6 +50,24 @@ public class CLSMatchEventFragment extends BaseFragment implements SwipeRefreshL
     private List<CLSMatchEventEntity> matchEventEntityList=null;
     private CLSMatchEventAdapter adapter=null;
 
+    private boolean isRunning=false;
+    private Handler handler=new Handler();
+    private Runnable task=new Runnable() {
+        @Override
+        public void run() {
+            if(swipeRefresh!=null){
+                if(swipeRefresh.isRefreshing()){
+                    return;
+                }
+                if(!isRunning) {
+                    isRunning = true;
+                    requestMatchEventInfo(matchEntity.getId());
+                    handler.postDelayed(task, 60000);
+                }
+            }
+        }
+    };
+
     @Override
     protected int getViewLayoutId() {
         return R.layout.fragment_match_event;
@@ -68,6 +87,7 @@ public class CLSMatchEventFragment extends BaseFragment implements SwipeRefreshL
                 setRefreshing();
                 requestMatchEventInfo(matchEntity.getId());
                 requestMatchEventImageInfo();
+                handler.postDelayed(task,60000);
             }
         }
     }
@@ -95,7 +115,7 @@ public class CLSMatchEventFragment extends BaseFragment implements SwipeRefreshL
                         swipeRefresh.setRefreshing(false);
                     }
                 }
-            }, 1000);
+            }, 500);
         }
     }
 
@@ -105,6 +125,7 @@ public class CLSMatchEventFragment extends BaseFragment implements SwipeRefreshL
         HttpClientUtil.getHttpClientUtil().sendGetRequest(Tag, url, 0, new HttpClientUtil.StringResponseCallBack() {
             @Override
             public void onBefore(Request request) {
+                isRunning=true;
 
             }
 
@@ -156,7 +177,6 @@ public class CLSMatchEventFragment extends BaseFragment implements SwipeRefreshL
                                         recyclerView.setLoadMoreDataComplete(R.string.tip_load_complete);
                                         return;
                                     }
-
                                 }
                             }
                         }
@@ -173,6 +193,7 @@ public class CLSMatchEventFragment extends BaseFragment implements SwipeRefreshL
             @Override
             public void onFinish(Call call) {
                 onRefreshCompelete();
+                isRunning=false;
             }
         });
     }
@@ -188,8 +209,6 @@ public class CLSMatchEventFragment extends BaseFragment implements SwipeRefreshL
             int teamId;
             JSONObject item;
             CLSMatchEventEntity entity=null;
-            homeTeamId=371;
-            awayTeamId=372;
             for(int i=0;i<size;i++){
                 item=datas.getJSONObject(i);
                 time=item.getIntValue("time");
@@ -264,9 +283,9 @@ public class CLSMatchEventFragment extends BaseFragment implements SwipeRefreshL
                 if(!TextUtils.isEmpty(response)){
                     JSONObject obj=JSONObject.parseObject(response);
                     if(obj!=null&&!obj.isEmpty()){
-                        int statusCode=obj.getIntValue("statusCode");
+                        int statusCode=obj.getIntValue("code");
                         if(statusCode==200){
-                            JSONObject dataMapObj=obj.getJSONObject("dataMap");
+                            JSONObject dataMapObj=obj.getJSONObject("data");
                             if(dataMapObj!=null&&!dataMapObj.isEmpty()){
                                 JSONArray eventImages=dataMapObj.getJSONArray("eventImages");
                                 if(eventImages!=null&&!eventImages.isEmpty()){
@@ -316,5 +335,11 @@ public class CLSMatchEventFragment extends BaseFragment implements SwipeRefreshL
         requestMatchEventImageInfo();
         requestMatchEventInfo(matchEntity.getId());
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(task);
     }
 }

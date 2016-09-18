@@ -52,6 +52,7 @@ public class CLSMatchTipOffListFragment extends BaseFragment implements SwipeRef
         if(data!=null){
             matchEntity=data.getParcelable("match_info");
             if(matchEntity!=null){
+                setRefreshing();
                 requestMatchTipOffInfo(matchEntity.getId());
             }
         }
@@ -60,6 +61,28 @@ public class CLSMatchTipOffListFragment extends BaseFragment implements SwipeRef
     @Override
     protected View getLoadingTargetView() {
         return null;
+    }
+
+    private void setRefreshing() {
+        swipeRefresh.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefresh.setRefreshing(true);
+            }
+        });
+    }
+
+    private void onRefreshCompelete() {
+        if(swipeRefresh!=null) {
+            swipeRefresh.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(swipeRefresh!=null) {
+                        swipeRefresh.setRefreshing(false);
+                    }
+                }
+            }, 1000);
+        }
     }
 
     private void requestMatchTipOffInfo(final int matchId){
@@ -85,7 +108,6 @@ public class CLSMatchTipOffListFragment extends BaseFragment implements SwipeRef
                         requestMatchTipOffInfo(matchId);
                     }
                 });
-
             }
 
             @Override
@@ -130,7 +152,7 @@ public class CLSMatchTipOffListFragment extends BaseFragment implements SwipeRef
 
             @Override
             public void onFinish(Call call) {
-
+                onRefreshCompelete();
             }
         });
     }
@@ -157,6 +179,6 @@ public class CLSMatchTipOffListFragment extends BaseFragment implements SwipeRef
 
     @Override
     public void onRefresh() {
-
+        requestMatchTipOffInfo(matchEntity.getId());
     }
 }

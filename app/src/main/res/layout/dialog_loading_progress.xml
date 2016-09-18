@@ -2,9 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center"
     android:background="@android:color/transparent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
     <LinearLayout
         android:layout_width="120dp"
         android:layout_height="120dp"
@@ -12,10 +13,12 @@
         android:gravity="center"
         android:orientation="vertical" >
 
-        <ProgressBar
+        <com.tysci.cls.views.widgets.progressview.CircularProgressView
             android:id="@+id/pb_loading_progressbar"
-            android:indeterminateDrawable="@drawable/icon_progress_loading"
-            android:indeterminateDuration="600"
+            app:cpv_animAutostart="true"
+            app:cpv_indeterminate="true"
+            app:cpv_thickness="3dp"
+            app:cpv_color="@color/white"
             android:layout_width="30dp"
             android:layout_height="30dp" />
 

@@ -149,6 +149,7 @@ public class AutoLoadMoreRecyclerView extends RecyclerView {
         isLoadMoreing=false;
         if(loadMoreFooterView!=null){
             loadMoreFooterView.setLoadMoreDataFinishedState(false);
+            loadMoreFooterView.setOnClickListener(null);
         }
     }
 
@@ -194,6 +195,7 @@ public class AutoLoadMoreRecyclerView extends RecyclerView {
         if(loadMoreFooterView!=null){
             loadMoreFooterView.setLoadFinishedTip(tip);
             loadMoreFooterView.setLoadMoreDataFinishedState(true);
+            loadMoreFooterView.setOnClickListener(null);
         }
     }
 
@@ -205,6 +207,7 @@ public class AutoLoadMoreRecyclerView extends RecyclerView {
         if(loadMoreFooterView!=null){
             loadMoreFooterView.setLoadFinishedTip(tip);
             loadMoreFooterView.setLoadMoreDataFinishedState(true);
+            loadMoreFooterView.setOnClickListener(null);
         }
     }
 

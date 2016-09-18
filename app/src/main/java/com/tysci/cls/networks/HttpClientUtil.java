@@ -2,6 +2,8 @@ package com.tysci.cls.networks;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -51,9 +53,9 @@ public class HttpClientUtil {
     /**
      * 连接超时时间
      */
-    private static final long CONNECTED_TIEM_OUT = 60;
-    private static final long READ_TIME_OUT = 60;
-    private static final long WRITE_TIME_OUT = 60;
+    private static final long CONNECTED_TIEM_OUT = 30;
+    private static final long READ_TIME_OUT = 30;
+    private static final long WRITE_TIME_OUT = 30;
 
     private Handler devidlerHandler = new Handler(Looper.getMainLooper());
 
@@ -64,7 +66,7 @@ public class HttpClientUtil {
         okHttpClientBuilder.readTimeout(READ_TIME_OUT, TimeUnit.SECONDS);
         okHttpClientBuilder.writeTimeout(WRITE_TIME_OUT, TimeUnit.SECONDS);
         /**取消重试*/
-        okHttpClientBuilder.retryOnConnectionFailure(false);
+        okHttpClientBuilder.retryOnConnectionFailure(true);
         /**添加cookie存储*/
         okHttpClientBuilder.cookieJar(new CookieJarImpl(new PersistentCookieStore(context)));
 
@@ -82,7 +84,6 @@ public class HttpClientUtil {
             }
         });
         okHttpClient = okHttpClientBuilder.build();
-
     }
 
     public static void initHttpClientUtil(Context context, String cachePath) {
@@ -138,6 +139,8 @@ public class HttpClientUtil {
         Headers.Builder headerBuilder = new Headers.Builder();
 //        headerBuilder.add("Charset", "UTF-8");
 //        headerBuilder.add("Accept-Encoding", "gzip,deflate");
+        KLog.e("Android " + Build.VERSION.RELEASE+"/" + Build.MODEL+"/"+Build.BRAND);
+        headerBuilder.add("User-Agent", "Android "+ Build.VERSION.RELEASE+ "/" + Build.MODEL+"/"+Build.BRAND);
         if (headers != null && !headers.isEmpty()) {
 
             for (String key : headers.keySet()) {
@@ -299,7 +302,11 @@ public class HttpClientUtil {
                 devidlerHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        responseCallBack.onError(resultCall, error);
+                        try {
+                            responseCallBack.onError(resultCall, error);
+                        }catch(Exception e){
+
+                        }
                         responseCallBack.onFinish(resultCall);
                     }
                 });
@@ -312,11 +319,11 @@ public class HttpClientUtil {
                     return;
                 }
 
-                if(!response.isSuccessful()||response.code()!=200){
+                if (!response.isSuccessful() || response.code() != 200) {
                     devidlerHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            responseCallBack.onError(call, new Exception("请求响应失败，响应码:"+response.code()));
+                            responseCallBack.onError(call, new Exception("请求响应失败，响应码:" + response.code()));
                             responseCallBack.onFinish(call);
                         }
                     });
@@ -339,9 +346,9 @@ public class HttpClientUtil {
                             responseCallBack.onError(call, finalError);
                         } else {
                             try {
-                                responseCallBack.onSuccess(call, finalResult);
+                            responseCallBack.onSuccess(call, finalResult);
                             } catch (Exception e) {
-                                KLog.e(e.getMessage());
+                             KLog.e(e.getMessage());
                             }
                         }
                         responseCallBack.onFinish(resultCall);
@@ -378,6 +385,50 @@ public class HttpClientUtil {
             }
         }));
         Request request = builder.build();
+        handlerReqeust(request, responseCallBack);
+    }
+
+    public void uploadBitmap(String tag,String url,Map<String,String>headers,Map<String,String>params,Bitmap bitmap,final ProgressResponseCallBack responseCallBack){
+        Request.Builder builder = new Request.Builder().tag(tag).url(url);
+        /**添加请求头部*/
+        if (headers != null && headers.size() > 0) {
+            for (String key : headers.keySet()) {
+                builder.addHeader(key, headers.get(key));
+            }
+        }
+        MultipartBody.Builder multipartBuilder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM);
+        if (params != null && params.size() > 0) {
+            for (String key : params.keySet()) {
+                multipartBuilder.addFormDataPart(key, params.get(key));
+            }
+        }
+        if(bitmap!=null){
+            RequestBody fileBody = null;
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] bytes = baos.toByteArray();
+            System.out.println("图片大小:" + bytes.length / 1024);
+            fileBody = RequestBody.create(MediaType.parse("image/jpeg"), bytes);
+            String fileKeyName=System.currentTimeMillis()+".jpeg";
+            multipartBuilder.addPart(Headers.of("Content-Disposition",
+                            "form-data; name=\"" + fileKeyName + "\"; filename=\"" + fileKeyName + "\""),
+                    fileBody);
+        }
+        RequestBody requestBody=multipartBuilder.build();
+        builder.post(new ProgressRequestBody(requestBody, new ProgressRequestBody.ProgressListener() {
+            @Override
+            public void onRequestProgress(long bytesWritten, long contentLength) {
+                final int progress = (int) ((int) (bytesWritten * 100) / contentLength);
+                devidlerHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        responseCallBack.loadingProgress(progress);
+                    }
+                });
+            }
+        }));
+        Request request=builder.build();
         handlerReqeust(request, responseCallBack);
     }
 

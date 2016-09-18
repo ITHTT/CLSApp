@@ -36,6 +36,11 @@ public class CLSMatchStatisticsAdapter extends RecyclerView.Adapter<CLSMatchStat
         holder.tvHomeTeamInfo.setText(info.getHomeTeamValue());
         holder.tvAwayTeamInfo.setText(info.getAwayTeamValue());
         holder.tvMatchInfo.setText(info.getStatisticKey());
+        if(position%2==1){
+            holder.itemView.setBackgroundResource(R.color.normal);
+        }else{
+            holder.itemView.setBackgroundResource(R.color.selected);
+        }
 
     }
 

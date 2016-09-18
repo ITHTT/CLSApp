@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">中超赛场</string>
     <string name="tip_load_complete">没有更多数据了</string>
+    <string name="attach_picture">图片</string>
+    <string name="attach_take_pic">拍照</string>
+    <string name="video_record">录制视频</string>
 </resources>

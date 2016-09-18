@@ -5,7 +5,7 @@
     android:layout_height="wrap_content">
     <View
         android:layout_width="match_parent"
-        android:layout_height="6dp"
+        android:layout_height="3dp"
         android:background="#eeeeee"/>
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,13 +20,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="13sp"
-            android:text="第1轮"/>
+            android:text=""/>
         <TextView
             android:id="@+id/tv_match_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:textSize="13sp"
-            android:text="7月3日 星期日"/>
+            android:text=""/>
     </LinearLayout>
 </LinearLayout>

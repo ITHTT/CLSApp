@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <com.tysci.cls.views.widgets.progressview.CircularProgressView
+        android:id="@+id/pbLoading"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:cpv_animAutostart="true"
+        app:cpv_indeterminate="true"
+        app:cpv_thickness="3dp"
+        app:cpv_color="@color/colorPrimary"/>
+
+    <TextView
+        android:id="@+id/load_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:ellipsize="end"
+        android:lineSpacingExtra="2dp"
+        android:maxLines="2"
+        android:text="加载中..."
+        android:textSize="14sp"
+        android:textColor="#3a3a3a"/>
+
+    <Button
+        android:id="@+id/btn_doing"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/button_selector"
+        android:text="点击重试"
+        />
+</LinearLayout>

@@ -27,13 +27,12 @@ public class CLSMatchLineupAdapter extends RecyclerView.Adapter<CLSMatchLineupAd
         View view=null;
         if(viewType==1){
             view= LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_match_lineup_item,parent,false);
-            view.setBackgroundResource(R.color.gray);
+            view.setBackgroundResource(R.color.selected);
         }else if(viewType==3){
             view=LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_match_lineup_second_title,parent,false);
-            view.setBackgroundResource(R.color.gray);
+            view.setBackgroundResource(R.color.selected);
         }else{
             view=LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_match_lineup_item,parent,false);
-            view.setBackgroundResource(R.color.white);
         }
         return new CLSMatchLineupViewHodler(view);
     }
@@ -53,6 +52,11 @@ public class CLSMatchLineupAdapter extends RecyclerView.Adapter<CLSMatchLineupAd
             }
             if(!TextUtils.isEmpty(info.getAwayPlayerName())){
                 holder.tvAwayTeamInfo.setText(info.getAwayPlayerNo()+" "+info.getAwayPlayerName());
+            }
+            if(position%2==1){
+                holder.itemView.setBackgroundResource(R.color.normal);
+            }else{
+                holder.itemView.setBackgroundResource(R.color.selected);
             }
         }
     }

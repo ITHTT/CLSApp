@@ -211,5 +211,35 @@ public class CommonUtils {
         textView.setText(style);
     }
 
+    public static int getMatchState(int status) {
+        switch (status) {
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 32:
+            case 33:
+            case 34:
+            case 40:
+            case 41:
+            case 42:
+                return 1;
+            case 60:
+            case 61:
+            case 70:
+            case 80:
+            case 90:
+            case 50:
+            case 100:
+            case 110:
+            case 120:
+                return 0;
+            default:
+                return 1;
+        }
+    }
 
 }

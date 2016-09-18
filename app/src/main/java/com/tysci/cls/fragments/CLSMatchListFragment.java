@@ -149,12 +149,13 @@ public class CLSMatchListFragment extends BaseFragment implements SwipeRefreshLa
                         if(statusCode==200){
                             JSONObject dataObj=obj.getJSONObject("data");
                             if(dataObj!=null&&!dataObj.isEmpty()){
+                                int stageSet=dataObj.getIntValue("stageSet");
                                 JSONArray matchArrays=dataObj.getJSONArray("teamMatchs");
                                 if(matchArrays!=null&&!matchArrays.isEmpty()){
                                     if(matchEntityList==null){
                                         matchEntityList=new ArrayList<CLSMatchEntity>(matchArrays.size());
                                     }
-                                    getMatchListDatas(matchArrays,matchEntityList);
+                                    getMatchListDatas(matchArrays, matchEntityList);
                                     if(adapter==null){
                                         adapter=new CLSMatchAdapter(matchEntityList);
                                         StickyHeaderDecoration decoration=new StickyHeaderDecoration(adapter);
@@ -163,6 +164,10 @@ public class CLSMatchListFragment extends BaseFragment implements SwipeRefreshLa
                                     }else{
                                         adapter.notifyDataSetChanged();
                                     }
+                                    int position=getCurrentMatch(stageSet);
+                                    //recyclerView.scrollToPosition(position);
+                                    LinearLayoutManager layoutManager= (LinearLayoutManager) recyclerView.getLayoutManager();
+                                    layoutManager.scrollToPositionWithOffset(position,0);
                                     recyclerView.setLoadMoreDataComplete(R.string.tip_load_complete);
                                     return;
                                 }
@@ -187,6 +192,17 @@ public class CLSMatchListFragment extends BaseFragment implements SwipeRefreshLa
                 baseActivity.getTitleBar().stopTitleBarRefresh();
             }
         });
+    }
+
+    private int getCurrentMatch(int stagetSet){
+        int size=matchEntityList.size();
+        for(int i=0;i<size;i++){
+           int stage=matchEntityList.get(i).getStage();
+            if(stage==stagetSet){
+                return i;
+            }
+        }
+        return 0;
     }
 
 

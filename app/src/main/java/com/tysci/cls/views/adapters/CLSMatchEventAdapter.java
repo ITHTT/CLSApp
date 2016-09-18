@@ -53,6 +53,12 @@ public class CLSMatchEventAdapter extends RecyclerView.Adapter<CLSMatchEventAdap
         }
 
         holder.tvMatchTime.setText(String.valueOf(info.getTime()));
+
+        if(position%2==1){
+            holder.itemView.setBackgroundResource(R.color.normal);
+        }else{
+            holder.itemView.setBackgroundResource(R.color.selected);
+        }
     }
 
     @Override
